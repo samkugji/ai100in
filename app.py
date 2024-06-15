@@ -1,19 +1,29 @@
 import os
-import streamlit as st
 from openai import OpenAI
+import streamlit as st
 
-client = OpenAI(
-    api_key=st.secrets["API_KEY"]
-)
+os.environ["OPENAI_API_KEY"] = st.secrets['API_KEY']
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
-chat_completion = client.chat.completions.create(
-    messages=[
-        {
-            "role": "user",
-            "content": "이미지 url을 받아서 화면에 보여주는 파이썬 코딩을 써줘",
-        }
-    ],
-    model="gpt-4o",
-)
+st.title('슈퍼 시나리오 봇🥸')
 
-st.write(chat_completion.choices[0].message.content)
+keyword = st.text_input("키워드를 입력하세요")
+
+if st.button('생성하기'):
+    with st.spinner('생성 중입니다.'):
+        chat_completion = client.chat.completions.create(
+            messages=[
+                {
+                    "role": "user",
+                    "content": keyword,
+                },
+                {
+                    "role": "system",
+                    "content": "입력 받은 키워드에 대한 흥미진진한 300자 이내의 시나리오를 작성해줘.",
+                }
+            ],
+            model="gpt-4o",
+        )
+
+    result = chat_completion.choices[0].message.content
+    st.write(result)
