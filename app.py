@@ -1,6 +1,14 @@
 import os
 from openai import OpenAI
 import streamlit as st
+import json
+
+file_path = './test.json'
+
+with open(file_path, 'r') as file:
+    data = json.load(file)
+
+    st.write(data)
 
 os.environ["OPENAI_API_KEY"] = st.secrets['API_KEY']
 client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
