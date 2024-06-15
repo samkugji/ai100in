@@ -1,14 +1,19 @@
+import os
+from openai import OpenAI
 import streamlit as st
 
-st.metric(label="Gas price", value=4, delta=-0.5,
-    delta_color="inverse")
+client = OpenAI(
+    api_key=st.secrets["API_KEY"]
+)
 
-st.metric(label="Active developers", value=123, delta=123,
-    delta_color="off")
-    
-st.title('동물 이미지 찾아주기 😎')
+chat_completion = client.chat.completions.create(
+    messages=[
+        {
+            "role": "user",
+            "content": "이미지 url을 받아서 화면에 보여주는 파이썬 코딩을 써줘",
+        }
+    ],
+    model="gpt-4o",
+)
 
-name = st.text_input('영어로 동물을 입력하세요')
-
-if st.button('찾아보기'):
-    st.image(f'https://edu.spartacodingclub.kr/random/?{name}')
+st.write(chat_completion.choices[0].message.content)
